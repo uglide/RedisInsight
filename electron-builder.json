@@ -15,13 +15,19 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["dmg", "zip", "mas-dev"],
+    "target": ["dmg", "zip", "mas-dev", "mas"],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "gatekeeperAssess": false
+  },
+  "mas": {
+    "entitlements": "resources/entitlements.mas.plist",
+    "entitlementsInherit": "resources/entitlements.mas.plist",
+    "hardenedRuntime": true,
+    "artifactName": "${productName}-${os}-mas.${ext}"
   },
   "masDev": {
     "entitlements": "resources/entitlements.mas.plist",
