@@ -9,6 +9,7 @@ aliases:
         security default-keychain -s $KEYCHAIN
         security unlock-keychain -p mysecretpassword $KEYCHAIN
         security import certs/cert.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
+        security import certs/mas-dev.p12 -k $KEYCHAIN -P "$CSC_MAS_DEV_PASSWORD" -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
       environment:
         KEYCHAIN: redisinsight.keychain
