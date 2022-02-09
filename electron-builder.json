@@ -15,7 +15,7 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["mas-dev"],
+    "target": ["dmg", "zip", "mas-dev"],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,

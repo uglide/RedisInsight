@@ -497,6 +497,7 @@ jobs:
             - release/RedisInsight*.zip
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
+            - release/mas-dev
             - release/*-mac.yml
   windows:
     executor:
