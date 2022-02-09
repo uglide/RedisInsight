@@ -479,9 +479,9 @@ jobs:
       - run:
           name: Build macos dmg
           command: |
-            export CSC_LINK=""
+            unset CSC_LINK
             export CSC_IDENTITY_AUTO_DISCOVERY=true
-
+            export CSC_KEYCHAIN=redisinsight.keychain
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/mac
@@ -490,10 +490,6 @@ jobs:
 
             UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
             rm -rf release/mac
-          environment:
-            CSC_KEYCHAIN: redisinsight.keychain
-            CSC_LINK: ""
-            CSC_IDENTITY_AUTO_DISCOVERY: true
           no_output_timeout: 15m
       - persist_to_workspace:
           root: .

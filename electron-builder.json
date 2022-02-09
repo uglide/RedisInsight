@@ -23,12 +23,6 @@
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "gatekeeperAssess": false
   },
-  "mas": {
-    "entitlements": "resources/entitlements.mas.plist",
-    "entitlementsInherit": "resources/entitlements.mas.plist",
-    "hardenedRuntime": true,
-    "artifactName": "${productName}-${os}-mas.${ext}"
-  },
   "masDev": {
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.plist",
