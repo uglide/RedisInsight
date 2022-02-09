@@ -477,6 +477,9 @@ jobs:
       - run:
           name: Build macos dmg
           command: |
+            export CSC_LINK=""
+            export CSC_IDENTITY_AUTO_DISCOVERY=true
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/mac
