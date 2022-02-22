@@ -494,7 +494,7 @@ jobs:
 
             UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:<< parameters.env >>
             rm -rf release/mac
-          no_output_timeout: 15m
+          no_output_timeout: 60m
       - persist_to_workspace:
           root: .
           paths:
