@@ -786,7 +786,7 @@ workflows:
           name: Store build artifacts (dev)
           requires:
             - Build app - Windows (dev)
-            # - Build app - MacOS (dev)
+            - Build app - MacOS (dev)
 
       # build and release electron app (stage)
       - setup-sign-certificates:
