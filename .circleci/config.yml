@@ -1016,7 +1016,6 @@ workflows:
           env: prod
           requires: &prodElectronBuildRequires
             - Setup build (prod)
-          <<: *prodFilter
       # virus check all electron apps (prod only)
       - virustotal:
           name: Virus check - rpm (prod)
