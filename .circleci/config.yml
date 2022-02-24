@@ -449,6 +449,7 @@ jobs:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
+            - release/RedisInsight*.rpm
   macosx:
     macos:
       xcode: 13.2.1
@@ -1000,3 +1001,29 @@ workflows:
           name: Build & release
           requires:
             - Approve guides release
+  rpm:
+    jobs:
+      # build and release electron app (prod)
+      - setup-sign-certificates:
+          name: Setup sign certificates (prod)
+      - setup-build:
+          name: Setup build (prod)
+          env: prod
+          requires:
+            - Setup sign certificates (prod)
+      - linux:
+          name: Build app - Linux (prod)
+          env: prod
+          requires: &prodElectronBuildRequires
+            - Setup build (prod)
+          <<: *prodFilter
+      # virus check all electron apps (prod only)
+      - virustotal:
+          name: Virus check - rpm (prod)
+          ext: rpm
+          requires:
+            - Build app - Linux (prod)
+      - store-build-artifacts:
+          name: Store build artifacts (prod)
+          requires:
+            - Virus check - rpm (prod)

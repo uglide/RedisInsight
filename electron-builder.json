@@ -44,7 +44,7 @@
   },
   "linux": {
     "icon": "./resources/icons",
-    "target": ["deb", "AppImage"],
+    "target": ["rpm"],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
     "artifactName": "${productName}-${os}.${ext}",
