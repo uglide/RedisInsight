@@ -470,6 +470,9 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            npm_config_keytar_binary_host_mirror="$KEYTAR_MIRROR" \
+            npm_config_node_sqlite3_binary_host_mirror="$SQLITE_MIRROR" \
+
             yarn install
             yarn --cwd redisinsight/api/ install
             yarn build:statics
@@ -478,6 +481,9 @@ jobs:
       - run:
           name: Build macos dmg
           command: |
+            npm_config_keytar_binary_host_mirror="$KEYTAR_MIRROR" \
+            npm_config_node_sqlite3_binary_host_mirror="$SQLITE_MIRROR" \
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/mac
@@ -1000,3 +1006,21 @@ workflows:
           name: Build & release
           requires:
             - Approve guides release
+  m1:
+    jobs:
+      - setup-sign-certificates:
+          name: Setup sign certificates (prod)
+      - setup-build:
+          name: Setup build (prod)
+          env: prod
+          requires:
+            - Setup sign certificates (prod)
+      - macosx:
+          name: Build app - MacOS (prod)
+          env: prod
+          requires:
+            - Setup sign certificates (prod)
+      - store-build-artifacts:
+          name: Store build artifacts (prod)
+          requires:
+            - Build app - MacOS (prod)

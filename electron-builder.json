@@ -15,7 +15,10 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["dmg", "zip"],
+    "target": [{
+      "target": "dmg",
+      "arch": ["x64", "arm64"]
+    }, "zip"],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
