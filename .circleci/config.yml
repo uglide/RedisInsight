@@ -485,7 +485,7 @@ jobs:
             export CSC_IDENTITY_AUTO_DISCOVERY=true
             export CSC_KEYCHAIN=redisinsight.keychain
 
-            UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+            CIRCLE_BUILD_NUM='' UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
             rm -rf release/mac
           no_output_timeout: 60m
       - persist_to_workspace:
