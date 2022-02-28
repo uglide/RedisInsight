@@ -471,9 +471,6 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          command: |
-            cp ./electron/package.json ./redisinsight/
-      - run:
           name: install dependencies
           command: |
             yarn install
