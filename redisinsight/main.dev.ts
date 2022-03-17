@@ -127,7 +127,7 @@ const bootstrap = async () => {
 
   app.setName('RedisInsight');
   // todo: CHANGE
-  app.setAppUserModelId('RedisInsight-preview');
+  app.setAppUserModelId('RedisInsight');
   if (process.platform !== 'darwin') {
     app.setAboutPanelOptions(AboutPanelOptions);
   }
