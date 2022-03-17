@@ -34,7 +34,7 @@ import MenuBuilder from './menu';
 import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
-import server from './api/dist/src/main';
+// import server from './api/dist/src/main';
 import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -102,7 +102,7 @@ const launchApiServer = async () => {
     const detectPortConst = await detectPort(port);
     process.env.API_PORT = detectPortConst?.toString();
     log.info('Available port:', detectPortConst);
-    server();
+    // server();
   } catch (error) {
     log.error('Catch server error:', error);
   }
@@ -126,6 +126,7 @@ const bootstrap = async () => {
   }
 
   app.setName('RedisInsight');
+  // todo: CHANGE
   app.setAppUserModelId('RedisInsight-preview');
   if (process.platform !== 'darwin') {
     app.setAboutPanelOptions(AboutPanelOptions);

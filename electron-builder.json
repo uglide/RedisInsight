@@ -15,7 +15,16 @@
   "artifactName": "${productName}.${ext}",
   "compression": "normal",
   "mac": {
-    "target": ["dmg", "zip"],
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
+      }
+    ],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
@@ -44,10 +53,23 @@
   },
   "linux": {
     "icon": "./resources/icons",
-    "target": ["deb", "AppImage"],
+    "target": [
+      {
+        "target": "deb",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "rpm",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "AppImage",
+        "arch": ["x64", "arm64"]
+      }
+    ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "${productName}-${os}.${ext}",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",

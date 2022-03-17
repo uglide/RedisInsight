@@ -11,9 +11,5 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "scripts": {},
-  "dependencies": {
-    "jsonpath": "^1.1.1",
-    "keytar": "^7.7.0",
-    "sqlite3": "^5.0.2"
-  }
+  "dependencies": {}
 }
