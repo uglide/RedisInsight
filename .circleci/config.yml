@@ -456,9 +456,7 @@ jobs:
           name: install dependencies
           command: |
             sudo apt-get update -y && sudo apt-get install -y rpm
-#            yarn --cwd redisinsight/api/ install
             yarn install
-#            yarn build:statics
           no_output_timeout: 15m
       - run:
           name: Build linux AppImage and deb
@@ -517,8 +515,6 @@ jobs:
           name: install dependencies
           command: |
             yarn install
-#            yarn --cwd redisinsight/api/ install
-#            yarn build:statics
           no_output_timeout: 15m
       - <<: *keychain
       - run:
@@ -568,8 +564,6 @@ jobs:
             choco install nodejs --version=15.14.0
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
-#            yarn --cwd redisinsight/api/ install
-#            yarn build:statics:win
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/win-unpacked
