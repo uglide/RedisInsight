@@ -491,6 +491,7 @@ jobs:
           paths:
             - release/RedisInsight*.deb
             - release/RedisInsight*.AppImage
+            - release/RedisInsight*.rpm
             - release/*-linux.yml
             - release/redisstack
   macosx:
