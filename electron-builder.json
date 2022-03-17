@@ -12,7 +12,7 @@
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",
-  "artifactName": "${productName}.${ext}",
+  "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
   "mac": {
     "target": [
@@ -30,10 +30,10 @@
     "darkModeSupport": true,
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "gatekeeperAssess": false
   },
   "dmg": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "contents": [
       {
         "x": 130,
@@ -46,9 +46,6 @@
         "path": "/Applications"
       }
     ]
-  },
-  "zip": {
-    "artifactName": "${productName}-${os}-${arch}.${ext}"
   },
   "win": {
     "target": ["nsis"],
