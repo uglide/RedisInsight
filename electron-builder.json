@@ -49,6 +49,7 @@
   },
   "win": {
     "target": ["nsis"],
+    "publisherName": ["Redis Labs Inc."],
     "artifactName": "${productName}-${os}-installer.${ext}"
   },
   "linux": {
