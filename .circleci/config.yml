@@ -540,13 +540,13 @@ jobs:
             # UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             # rm -rf release/mac
           no_output_timeout: 15m
-      - persist_to_workspace:
-          root: .
-          paths:
-            - release/RedisInsight*.zip
-            - release/RedisInsight*.dmg
-            - release/RedisInsight*.dmg.blockmap
-            - release/*-mac.yml
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #       - release/RedisInsight*.zip
+      #       - release/RedisInsight*.dmg
+      #       - release/RedisInsight*.dmg.blockmap
+      #       - release/*-mac.yml
   windows:
     executor:
       name: win/default
