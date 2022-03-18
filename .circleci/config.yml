@@ -455,25 +455,25 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo apt-get update -y && sudo apt-get install -y rpm
-            yarn --cwd redisinsight/api/ install
-            yarn install
-            yarn build:statics
+            # sudo apt-get update -y && sudo apt-get install -y rpm
+            # yarn --cwd redisinsight/api/ install
+            # yarn install
+            # yarn build:statics
           no_output_timeout: 15m
       - run:
           name: Build linux AppImage and deb
           command: |
-            if [ << parameters.env >> == 'prod' ]; then
-              yarn package:prod
-              exit 0;
-            fi
+            # if [ << parameters.env >> == 'prod' ]; then
+            #   yarn package:prod
+            #   exit 0;
+            # fi
 
-            if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
-              exit 0;
-            fi
+            # if [ << parameters.env >> == 'stage' ]; then
+            #   UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+            #   exit 0;
+            # fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+            # UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
       - when:
           condition:
             equal: [ true, << parameters.redisstack >> ]
@@ -484,10 +484,10 @@ jobs:
             - run:
                 name: Build modules
                 command: |
-                  PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  # PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
+                  # PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
+                  # PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+                  # PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
