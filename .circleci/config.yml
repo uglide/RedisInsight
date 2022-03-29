@@ -603,6 +603,7 @@ jobs:
           paths:
             - release/RedisInsight*.exe
             - release/RedisInsight*.exe.blockmap
+            - release/RedisInsight*.appx
             - release/*.yml
   virustotal:
     executor: linux-executor

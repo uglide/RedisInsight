@@ -46,12 +46,19 @@
     ]
   },
   "win": {
-    "target": ["nsis"],
+    "target": ["nsis", "appx"],
+    "sign": "./scripts/SignWin.js",
     "artifactName": "${productName}-${os}-installer.${ext}",
     "publisherName": [
       "Redis Inc.",
       "Redis Labs Inc."
     ]
+  },
+  "appx": {
+    "publisher": "CN=55A7089F-565A-48D4-9D43-E226C203F9BB",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
+    "displayName": "RedisInsight",
+    "identityName": "RedisLtd.RedisInsight"
   },
   "linux": {
     "icon": "./resources/icons",
