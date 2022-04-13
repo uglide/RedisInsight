@@ -285,17 +285,22 @@ export class RedisService {
       host, port, username, password, db,
     };
     if (tls) {
-      config.tls = await this.getTLSConfig(tls);
+      config.tls = await this.getTLSConfig(tls, host);
     }
     return config;
   }
 
-  private async getTLSConfig(tls: TlsDto): Promise<ConnectionOptions> {
+  private async getTLSConfig(tls: TlsDto, servername: string = null): Promise<ConnectionOptions> {
     let config: ConnectionOptions;
     config = {
       rejectUnauthorized: tls.verifyServerCert,
       checkServerIdentity: () => undefined,
     };
+
+    if (servername) {
+      config.servername = servername;
+    }
+
     if (tls.caCertId || tls.newCaCert) {
       const caCertConfig = await this.getCaCertConfig(tls);
       config = {
