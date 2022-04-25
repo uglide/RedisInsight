@@ -60,14 +60,6 @@
         "target": "AppImage",
         "arch": ["x64"]
       },
-      {
-        "target": "deb",
-        "arch": ["x64"]
-      },
-      {
-        "target": "rpm",
-        "arch": ["x64"]
-      }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",

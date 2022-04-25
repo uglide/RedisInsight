@@ -4,11 +4,14 @@ import { ReadStream, WriteStream } from 'fs';
 import config from 'src/utils/config';
 import { FileLogsEmitter } from 'src/modules/profiler/emitters/file.logs-emitter';
 import { TelemetryEvents } from 'src/constants';
+import { Logger } from '@nestjs/common';
 
 const DIR_PATH = config.get('dir_path');
 const PROFILER = config.get('profiler');
 
 export class LogFile {
+  private logger = new Logger('LogFile');
+
   private readonly filePath: string;
 
   private startTime: Date;
@@ -36,6 +39,7 @@ export class LogFile {
     this.filePath = join(DIR_PATH.tmpDir, this.id);
     this.startTime = new Date();
     this.analyticsEvents = analyticsEvents || new Map();
+    this.logger.debug('LogFile:constructor', this as any);
   }
 
   /**
@@ -47,6 +51,9 @@ export class LogFile {
       this.writeStream = fs.createWriteStream(this.filePath, { flags: 'a' });
     }
     this.writeStream.on('error', () => {});
+
+    this.logger.debug('LogFile:getWriteStream', this as any);
+
     return this.writeStream;
   }
 
@@ -57,15 +64,22 @@ export class LogFile {
   getReadStream(): ReadStream {
     fs.ensureFileSync(this.filePath);
     const stream = fs.createReadStream(this.filePath);
+    stream.on('error', (e) => {
+      this.logger.debug('getReadStream:onStreamError', e as any);
+    });
     stream.once('end', () => {
       stream.destroy();
       try {
         this.analyticsEvents.get(TelemetryEvents.ProfilerLogDownloaded)(this.instanceId, this.getFileSize());
       } catch (e) {
+        this.logger.debug('LogFile:getReadStream:once.end_ERROR', this as any);
         // ignore analytics errors
       }
+      this.logger.debug('LogFile:getReadStream:once.end_SUCCESS', this as any);
       // logFile.destroy();
     });
+
+    this.logger.debug('LogFile:getReadStream', this as any);
 
     return stream;
   }
@@ -78,6 +92,8 @@ export class LogFile {
       this.emitter = new FileLogsEmitter(this);
     }
 
+    this.logger.debug('LogFile:getEmitter', this as any);
+
     return this.emitter;
   }
 
@@ -85,21 +101,29 @@ export class LogFile {
    * Generate file name
    */
   getFilename(): string {
+    this.logger.debug('LogFile:getFilename', this as any);
+
     return `${this.alias}-${this.startTime.getTime()}-${Date.now()}`;
   }
 
   getFileSize(): number {
+    this.logger.debug('LogFile:getFileSize', this as any);
+
     const stats = fs.statSync(this.filePath);
     return stats.size;
   }
 
   setAlias(alias: string) {
+    this.logger.debug('LogFile:setAlias', this as any);
+
     this.alias = alias;
   }
 
   addProfilerClient(id: string) {
     this.clientObservers.set(id, id);
     this.idleSince = 0;
+
+    this.logger.debug('LogFile:addProfilerClient', this as any);
   }
 
   removeProfilerClient(id: string) {
@@ -110,10 +134,14 @@ export class LogFile {
 
       setTimeout(() => {
         if (this?.idleSince && Date.now() - this.idleSince >= PROFILER.logFileIdleThreshold) {
+          this.logger.debug('LogFile:removeProfilerClient_setTimeout', this as any);
+
           this.destroy();
         }
       }, PROFILER.logFileIdleThreshold);
     }
+
+    this.logger.debug('LogFile:removeProfilerClient', this as any);
   }
 
   /**
@@ -127,7 +155,10 @@ export class LogFile {
       fs.unlink(this.filePath);
 
       this.analyticsEvents.get(TelemetryEvents.ProfilerLogDeleted)(this.instanceId, size);
+
+      this.logger.debug('LogFile:destroy_SUCCESS', this as any);
     } catch (e) {
+      this.logger.debug('LogFile:destroy_ERROR', this as any);
       // ignore error
     }
   }

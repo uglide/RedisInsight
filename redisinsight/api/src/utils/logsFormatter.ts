@@ -26,6 +26,7 @@ export const sensitiveDataFormatter = format((info, opts = {}) => {
     });
   }
 
+  console.log('___info', info);
   return {
     ...info,
     stack,
