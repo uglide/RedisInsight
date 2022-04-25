@@ -32,7 +32,7 @@ const MonitorLog = () => {
 
   const downloadBtnProps: any = {}
   if (isElectron) {
-    downloadBtnProps.download = true
+    // downloadBtnProps.download = true
   } else {
     downloadBtnProps.target = '_blank'
   }

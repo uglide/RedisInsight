@@ -18,10 +18,7 @@
     "target": [
       {
         "target": "dmg",
-        "arch": ["x64", "arm64"]
-      }, {
-        "target": "zip",
-        "arch": ["x64", "arm64"]
+        "arch": ["x64"]
       }
     ],
     "type": "distribution",
@@ -59,7 +56,7 @@
       {
         "target": "AppImage",
         "arch": ["x64"]
-      },
+      }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
