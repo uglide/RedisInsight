@@ -1,3 +1,8 @@
+export type RedisBuffer = {
+  type: string,
+  data: number[],
+};
+
 export enum BrowserToolKeysCommands {
   Scan = 'scan',
   Ttl = 'ttl',

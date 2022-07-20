@@ -10,6 +10,7 @@ import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
 import {
   CreateListWithExpireDto,
   DeleteListElementsDto,
@@ -128,11 +129,21 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      const elements = await this.browserTool.execCommand(
+      let elements = await this.browserTool.execCommand(
         clientOptions,
         BrowserToolListCommands.Lrange,
         [keyName, offset, offset + count - 1],
+        null,
       );
+
+      // ASCII
+      // elements = elements.map((element) => getASCIISafeStringFromBuffer(element));
+
+      // // UTF8
+      // elements = elements.map((element) => element.toString());
+
+      // console.log('___elements', elements);
+
       this.logger.log('Succeed to get elements of the list.');
       result = { keyName, total, elements };
     } catch (error) {

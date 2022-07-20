@@ -34,6 +34,7 @@ import {
   SetListElementResponse,
 } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
+import Formatter from 'uiSrc/pages/browser/components/formatter';
 
 const headerHeight = 60
 const rowHeight = 43
@@ -214,8 +215,8 @@ const ListDetails = (props: Props) => {
         expanded: boolean = false
       ) {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = element.substring(0, 200)
-        const tooltipContent = formatLongName(element)
+        // const cellContent = element.substring(0, 200)
+        // const tooltipContent = formatLongName(element)
 
         if (editing) {
           return (
@@ -246,10 +247,12 @@ const ListDetails = (props: Props) => {
                   title="Element"
                   className={styles.tooltip}
                   position="bottom"
-                  content={tooltipContent}
+                  content="tooltip"
+                  // content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{cellContent}</>
+                  <Formatter>{element}</Formatter>
+                  {/*<>{cellContent}</>*/}
                 </EuiToolTip>
               )}
               {expanded && element}

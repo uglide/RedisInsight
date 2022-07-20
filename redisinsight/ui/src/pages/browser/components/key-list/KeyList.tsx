@@ -39,6 +39,7 @@ import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
+import Formatter from 'uiSrc/pages/browser/components/formatter';
 
 export interface Props {
   hideHeader?: boolean
@@ -104,8 +105,8 @@ const KeyList = (props: Props) => {
       truncateText: true,
       render: (cellData: string = '', { name }: any) => {
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = replaceSpaces(cellData.substring(0, 200))
-        const tooltipContent = formatLongName(cellData)
+        // const cellContent = replaceSpaces(cellData.substring(0, 200))
+        // const tooltipContent = formatLongName(cellData)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${name}`}>
@@ -114,9 +115,9 @@ const KeyList = (props: Props) => {
                 className={styles.tooltip}
                 anchorClassName="truncateText"
                 position="bottom"
-                content={tooltipContent}
+                content="also formatted string here. !Note: formatted only once"
               >
-                <>{cellContent}</>
+                <Formatter>{cellData}</Formatter>
               </EuiToolTip>
             </div>
           </EuiText>

@@ -19,7 +19,7 @@ import {
   KeyTtlResponse,
   RedisDataType,
 } from 'src/modules/browser/dto';
-import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
+import { BrowserToolKeysCommands, RedisBuffer } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
@@ -29,6 +29,7 @@ import {
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
 import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -129,9 +130,15 @@ export class KeysBusinessService {
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
 
-      result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
-        result[nodeIndex].keys[i].name = key.name.toString();
-      }));
+      // // ASCII
+      // result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
+      //   result[nodeIndex].keys[i].name = getASCIISafeStringFromBuffer(key.name);
+      // }));
+      //
+      // // UTF8
+      // result.forEach((nodeResult, nodeIndex) => nodeResult.keys.forEach((key, i) => {
+      //   result[nodeIndex].keys[i].name = key.name.toString();
+      // }));
 
       return result;
     } catch (error) {
@@ -152,9 +159,10 @@ export class KeysBusinessService {
 
   public async getKeyInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: string | Buffer,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log('Getting key info.');
+
     try {
       const type = await this.browserTool.execCommand(
         clientOptions,

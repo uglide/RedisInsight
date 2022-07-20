@@ -87,6 +87,7 @@ const keysSlice = createSlice({
       state.error = ''
     },
     loadKeysSuccess: (state, { payload: { data, isSearched, isFiltered } }) => {
+      console.time('state')
       state.data = {
         ...data,
         previousResultCount: data.keys?.length,
@@ -95,6 +96,7 @@ const keysSlice = createSlice({
       state.isSearched = isSearched
       state.isFiltered = isFiltered
       state.data.lastRefreshTime = Date.now()
+      console.timeEnd('state')
     },
     loadKeysFailure: (state, { payload }) => {
       state.loading = false
@@ -403,7 +405,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
           cancelToken: sourceKeysFetch.token,
         }
       )
-
+      console.time('1');
       sourceKeysFetch = null
       if (isStatusSuccessful(status)) {
         dispatch(
@@ -413,6 +415,8 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
             isFiltered: !!type,
           })
         )
+        console.timeEnd('1')
+
         if (!!type || !!match) {
           let matchValue = '*'
           if (match !== '*' && !!match) {

@@ -28,6 +28,7 @@ export const parseAddedMastersSentinel = (
 }))
 
 export const parseKeysListResponse = (prevShards = {}, data = []) => {
+  console.time('parse')
   const shards = { ...prevShards }
 
   const result = {
@@ -58,6 +59,21 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
     }
 
     // result.keys.push(...node.keys)
+
+    console.time('keys')
+    node.keys = node.keys.map((key) => {
+      // console.log('el', element)
+      if(key.name.type === 'Buffer') {
+        key.name = {
+          type: 'Buffer',
+          data: new Uint8Array(key.name.data),
+        }
+      }
+
+      return key;
+    })
+    console.timeEnd('keys')
+
     result.keys = result.keys.concat(node.keys)
   })
 
@@ -81,6 +97,7 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
 
   result.nextCursor = nextCursor.join('||') || '0'
   result.shardsMeta = shards
+  console.timeEnd('parse')
 
   return result
 }

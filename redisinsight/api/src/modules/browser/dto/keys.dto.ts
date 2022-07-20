@@ -10,7 +10,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ApiProperty,
   ApiPropertyOptional,
@@ -35,7 +35,14 @@ export class KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
+  // @IsString()
+  @Transform((value) => {
+    if (value?.type === 'Buffer') {
+      return Buffer.from(Object.values(value.data));
+    }
+
+    return value;
+  })
   keyName: string;
 }
 

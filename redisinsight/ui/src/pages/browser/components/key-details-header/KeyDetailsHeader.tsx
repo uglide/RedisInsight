@@ -398,94 +398,94 @@ const KeyDetailsHeader = ({
                 <EuiFlexItem className={styles.keyType} grow={false}>
                   <GroupBadge type={type} />
                 </EuiFlexItem>
-                <EuiFlexItem
-                  onMouseEnter={onMouseEnterKey}
-                  onMouseLeave={onMouseLeaveKey}
-                  onClick={onClickKey}
-                  grow={false}
-                  className={cx(
-                    styles.keyFlexItem,
-                    keyIsEditing || keyIsHovering ? styles.keyFlexItemEditing : null,
-                  )}
-                  data-testid="edit-key-btn"
-                >
-                  {(keyIsEditing || keyIsHovering) && (
-                    <EuiFlexGrid
-                      columns={1}
-                      responsive={false}
-                      gutterSize="none"
-                      className={styles.classNameGridComponent}
-                    >
-                      <EuiFlexItem
-                        grow
-                        component="span"
-                        className={styles.flexItemKeyInput}
-                      >
-                        <EuiToolTip
-                          title="Key Name"
-                          className={styles.tooltip}
-                          position="left"
-                          content={tooltipContent}
-                          anchorClassName={styles.toolTipAnchorKey}
-                        >
-                          <>
-                            <InlineItemEditor
-                              onApply={() => applyEditKey()}
-                              onDecline={(event) => cancelEditKey(event)}
-                              viewChildrenMode={!keyIsEditing}
-                              isLoading={loading}
-                              declineOnUnmount={false}
-                            >
-                              <EuiFieldText
-                                name="key"
-                                id="key"
-                                inputRef={keyNameRef}
-                                className={cx(
-                                  styles.keyInput,
-                                  { [styles.keyInputEditing]: keyIsEditing }
-                                )}
-                                placeholder={AddCommonFieldsFormConfig?.keyName?.placeholder}
-                                value={key}
-                                fullWidth={false}
-                                compressed
-                                isLoading={loading}
-                                onChange={onChangeKey}
-                                append={appendKeyEditing()}
-                                readOnly={!keyIsEditing}
-                                autoComplete="off"
-                                data-testid="edit-key-input"
-                              />
-                            </InlineItemEditor>
-                            <p className={styles.keyHiddenText}>{key}</p>
-                          </>
-                        </EuiToolTip>
-                        {keyIsHovering && (
-                          <EuiToolTip
-                            position="right"
-                            content="Copy"
-                            anchorClassName={styles.copyKey}
-                          >
-                            <EuiButtonIcon
-                              iconType="copy"
-                              id={COPY_KEY_NAME_ICON}
-                              aria-label="Copy key name"
-                              color="primary"
-                              onClick={(event: any) =>
-                                handleCopy(event, key, keyIsEditing, keyNameRef)}
-                              data-testid="copy-key-name-btn"
-                            />
-                          </EuiToolTip>
-                        )}
-                      </EuiFlexItem>
-                    </EuiFlexGrid>
-                  )}
-                  <EuiText className={cx(styles.key, { [styles.hidden]: keyIsEditing || keyIsHovering })} data-testid="key-name-text">
-                    <b className="truncateText">
-                      {replaceSpaces(keyProp?.substring(0, 200))}
-                    </b>
-                  </EuiText>
-                </EuiFlexItem>
-                <EuiFlexItem />
+                {/*<EuiFlexItem*/}
+                {/*  onMouseEnter={onMouseEnterKey}*/}
+                {/*  onMouseLeave={onMouseLeaveKey}*/}
+                {/*  onClick={onClickKey}*/}
+                {/*  grow={false}*/}
+                {/*  className={cx(*/}
+                {/*    styles.keyFlexItem,*/}
+                {/*    keyIsEditing || keyIsHovering ? styles.keyFlexItemEditing : null,*/}
+                {/*  )}*/}
+                {/*  data-testid="edit-key-btn"*/}
+                {/*>*/}
+                {/*  {(keyIsEditing || keyIsHovering) && (*/}
+                {/*    <EuiFlexGrid*/}
+                {/*      columns={1}*/}
+                {/*      responsive={false}*/}
+                {/*      gutterSize="none"*/}
+                {/*      className={styles.classNameGridComponent}*/}
+                {/*    >*/}
+                {/*      <EuiFlexItem*/}
+                {/*        grow*/}
+                {/*        component="span"*/}
+                {/*        className={styles.flexItemKeyInput}*/}
+                {/*      >*/}
+                {/*        <EuiToolTip*/}
+                {/*          title="Key Name"*/}
+                {/*          className={styles.tooltip}*/}
+                {/*          position="left"*/}
+                {/*          content={tooltipContent}*/}
+                {/*          anchorClassName={styles.toolTipAnchorKey}*/}
+                {/*        >*/}
+                {/*          <>*/}
+                {/*            <InlineItemEditor*/}
+                {/*              onApply={() => applyEditKey()}*/}
+                {/*              onDecline={(event) => cancelEditKey(event)}*/}
+                {/*              viewChildrenMode={!keyIsEditing}*/}
+                {/*              isLoading={loading}*/}
+                {/*              declineOnUnmount={false}*/}
+                {/*            >*/}
+                {/*              <EuiFieldText*/}
+                {/*                name="key"*/}
+                {/*                id="key"*/}
+                {/*                inputRef={keyNameRef}*/}
+                {/*                className={cx(*/}
+                {/*                  styles.keyInput,*/}
+                {/*                  { [styles.keyInputEditing]: keyIsEditing }*/}
+                {/*                )}*/}
+                {/*                placeholder={AddCommonFieldsFormConfig?.keyName?.placeholder}*/}
+                {/*                value={key}*/}
+                {/*                fullWidth={false}*/}
+                {/*                compressed*/}
+                {/*                isLoading={loading}*/}
+                {/*                onChange={onChangeKey}*/}
+                {/*                append={appendKeyEditing()}*/}
+                {/*                readOnly={!keyIsEditing}*/}
+                {/*                autoComplete="off"*/}
+                {/*                data-testid="edit-key-input"*/}
+                {/*              />*/}
+                {/*            </InlineItemEditor>*/}
+                {/*            <p className={styles.keyHiddenText}>{key}</p>*/}
+                {/*          </>*/}
+                {/*        </EuiToolTip>*/}
+                {/*        {keyIsHovering && (*/}
+                {/*          <EuiToolTip*/}
+                {/*            position="right"*/}
+                {/*            content="Copy"*/}
+                {/*            anchorClassName={styles.copyKey}*/}
+                {/*          >*/}
+                {/*            <EuiButtonIcon*/}
+                {/*              iconType="copy"*/}
+                {/*              id={COPY_KEY_NAME_ICON}*/}
+                {/*              aria-label="Copy key name"*/}
+                {/*              color="primary"*/}
+                {/*              onClick={(event: any) =>*/}
+                {/*                handleCopy(event, key, keyIsEditing, keyNameRef)}*/}
+                {/*              data-testid="copy-key-name-btn"*/}
+                {/*            />*/}
+                {/*          </EuiToolTip>*/}
+                {/*        )}*/}
+                {/*      </EuiFlexItem>*/}
+                {/*    </EuiFlexGrid>*/}
+                {/*  )}*/}
+                {/*  <EuiText className={cx(styles.key, { [styles.hidden]: keyIsEditing || keyIsHovering })} data-testid="key-name-text">*/}
+                {/*    <b className="truncateText">*/}
+                {/*      {replaceSpaces(keyProp?.substring(0, 200))}*/}
+                {/*    </b>*/}
+                {/*  </EuiText>*/}
+                {/*</EuiFlexItem>*/}
+                {/*<EuiFlexItem />*/}
                 {!arePanelsCollapsed && (
                   <EuiFlexItem grow={false} style={{ marginRight: '8px' }}>
                     <EuiToolTip

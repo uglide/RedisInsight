@@ -225,7 +225,7 @@ export function fetchListElements(key: string, offset: number, count: number, re
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.post<GetListElementsResponse>(
+      let { data, status } = await apiService.post<GetListElementsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.LIST_GET_ELEMENTS
@@ -236,6 +236,18 @@ export function fetchListElements(key: string, offset: number, count: number, re
           count,
         }
       )
+
+      console.time('l1')
+      data.elements = data.elements.map((element) => {
+        // console.log('el', element)
+        if(element.type === 'Buffer') {
+          return {
+            type: 'Buffer',
+            data: new Uint8Array(element.data),
+          }
+        }
+      })
+      console.timeEnd('l1')
 
       if (isStatusSuccessful(status)) {
         dispatch(loadListElementsSuccess(data))
