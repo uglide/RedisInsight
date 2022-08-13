@@ -33,7 +33,7 @@ then
 fi
 
 # Unique ID for the test run
-ID=$RTE-$(tr -dc A-Za-z0-9 </dev/urandom | head -c 6)
+ID=$(echo "$RTE-$(tr -dc A-Za-z0-9 </dev/urandom | head -c 6)" | sed 's/-//g')
 
 # Check if we need to run prestart script
 PRESTART="$BASEDIR/$RTE/prestart.sh"
