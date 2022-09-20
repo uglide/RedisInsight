@@ -22,12 +22,24 @@ export class ProfilerClient {
 
   private items: any[];
 
+  private emitted: number = 0;
+
+  private time = 0;
+
+  private heap = 0;
+
+  private interval;
+
   constructor(id: string, client: Socket) {
     this.id = id;
     this.client = client;
     this.items = [];
     this.debounce = debounce(() => {
+      if (!this.heap) {
+        this.heap = process.memoryUsage().heapUsed;
+      }
       if (this.items.length) {
+        this.emitted += this.items.length;
         this.logsEmitters.forEach((emitter) => {
           emitter.emit(this.items);
         });
@@ -36,9 +48,23 @@ export class ProfilerClient {
     }, 10, {
       maxWait: 50,
     });
+    this.interval = setInterval(this.throughput.bind(this), 1000);
+  }
+
+  throughput() {
+    const time = Date.now() - this.time;
+    console.log(
+      '__________throughput',
+      this.emitted,
+      `${(this.emitted / time).toFixed(3)} Kops/s`,
+      `heapUsed: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
+    );
+    this.time = Date.now();
+    this.emitted = 0;
   }
 
   public handleOnData(payload: IMonitorData) {
+    // console.log('___payload', payload)
     const {
       time, args, source, database,
     } = payload;
@@ -51,6 +77,7 @@ export class ProfilerClient {
   }
 
   public handleOnDisconnect() {
+    clearInterval(this.interval);
     this.client.emit(
       ProfilerServerEvents.Exception,
       new WsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
@@ -69,6 +96,7 @@ export class ProfilerClient {
 
   public destroy() {
     this.logsEmitters.forEach((emitter) => emitter.removeProfilerClient(this.id));
+    clearInterval(this.interval);
   }
 
   /**

@@ -6,6 +6,7 @@ import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Summary } from 'src/modules/profiler/models/summary';
 
 export class RedisObserver extends EventEmitter2 {
   private logger = new Logger('RedisObserver');
@@ -19,6 +20,8 @@ export class RedisObserver extends EventEmitter2 {
   private shardsObservers: IShardObserver[] = [];
 
   public status: RedisObserverStatus;
+
+  private summary = new Summary();
 
   constructor() {
     super();
@@ -80,7 +83,16 @@ export class RedisObserver extends EventEmitter2 {
       };
 
       observer.on('monitor', monitorListenerFn);
+      observer.on('monitor', (
+        time, args, source, database,
+      ) => {
+        const log = {
+          time, args, source, database, shardOptions: {},
+        };
+        return this.summary.handleOnData(log);
+      });
       observer.on('end', endListenerFn);
+      observer.on('end', this.summary.getSummary.bind(this.summary));
 
       profilerListeners.push(monitorListenerFn, endListenerFn);
       this.logger.debug(`Subscribed to shard observer. Current listeners: ${observer.listenerCount('monitor')}`);
@@ -106,6 +118,7 @@ export class RedisObserver extends EventEmitter2 {
 
   public unsubscribe(id: string) {
     this.removeShardsListeners(id);
+    this.profilerClients.get(id).destroy();
     this.profilerClients.delete(id);
     this.profilerClientsListeners.delete(id);
     if (this.profilerClients.size === 0) {
@@ -114,6 +127,7 @@ export class RedisObserver extends EventEmitter2 {
 
     this.logger.debug(`Profiler Client with id:${id} was unsubscribed`);
     this.logCurrentState();
+    this.summary.getSummary();
   }
 
   public disconnect(id: string) {
