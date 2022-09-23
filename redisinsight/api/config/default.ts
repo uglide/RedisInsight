@@ -58,6 +58,9 @@ export default {
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
     excludeRoutes: [],
   },
+  strategies: {
+    databaseProvider: process.env.DATABASE_PROVIDER_STRATEGY,
+  },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
     serveClient: process.env.SOCKETS_SERVE_CLIENT ? process.env.SOCKETS_SERVE_CLIENT === 'true' : false,

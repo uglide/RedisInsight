@@ -16,6 +16,7 @@ import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { NotificationModule } from 'src/modules/notification/notification.module';
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
+import { DatabaseModule } from 'src/modules/database/database.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -37,6 +38,7 @@ const PATH_CONFIG = config.get('dir_path');
   imports: [
     TypeOrmModule.forRoot(ormConfig),
     RouterModule.forRoutes(routes),
+    DatabaseModule,
     SharedModule,
     InstancesModule,
     RedisEnterpriseModule,
