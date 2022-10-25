@@ -551,6 +551,7 @@ jobs:
           paths:
             - release/RedisInsight*.deb
             - release/RedisInsight*.rpm
+            - release/RedisInsight*.snap
             - release/RedisInsight*.AppImage
             - release/*-linux.yml
             - release/redisstack
