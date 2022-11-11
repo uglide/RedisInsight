@@ -13,7 +13,7 @@ import reducer, {
   setAppContextConnectedInstanceId,
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
-  setBrowserKeyListScrollPosition,
+  setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
@@ -31,7 +31,9 @@ import reducer, {
   appContextBrowserTree,
   setBrowserTreeSelectedLeaf,
   updateBrowserTreeSelectedLeaf,
-  setBrowserTreeDelimiter
+  setBrowserTreeDelimiter,
+  setBrowserIsNotRendered,
+  setBrowserRedisearchScrollPosition,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -171,20 +173,47 @@ describe('slices', () => {
     })
   })
 
-  describe('setBrowserKeyListScrollPosition', () => {
+  describe('setBrowserPatternScrollPosition', () => {
     it('should properly set scroll position of keyList', () => {
       // Arrange
-      const scrollTopPosition = 530
+      const scrollPatternTopPosition = 530
       const state = {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          scrollTopPosition
+          scrollPatternTopPosition
         }
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserKeyListScrollPosition(scrollTopPosition))
+      const nextState = reducer(initialState, setBrowserPatternScrollPosition(scrollPatternTopPosition))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserRedisearchScrollPosition', () => {
+    it('should properly set scroll position of keyList', () => {
+      // Arrange
+      const scrollRedisearchTopPosition = 530
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          scrollRedisearchTopPosition
+        }
+      }
+
+      // Act
+      const nextState = reducer(
+        initialState,
+        setBrowserRedisearchScrollPosition(scrollRedisearchTopPosition)
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -469,6 +498,30 @@ describe('slices', () => {
       })
 
       expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserIsNotRendered', () => {
+    it('should properly set browser is not rendered value', () => {
+      // Arrange
+      const isNotRendered = false
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          isNotRendered
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserIsNotRendered(isNotRendered))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
     })
   })
 

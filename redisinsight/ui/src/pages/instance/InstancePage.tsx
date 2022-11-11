@@ -6,7 +6,7 @@ import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchInstanceAction,
+  fetchConnectedInstanceAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
   instancesSelector,
@@ -27,6 +27,7 @@ import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
+import { setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -67,7 +68,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
   useEffect(() => {
-    dispatch(fetchInstanceAction(connectionInstanceId, () => {
+    dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {
       !modulesData.length && dispatch(fetchInstancesAction())
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
@@ -99,6 +100,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())
+    dispatch(setRedisearchInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

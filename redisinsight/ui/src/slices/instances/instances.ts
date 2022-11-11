@@ -8,7 +8,7 @@ import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
-import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { fetchMastersSentinelAction } from './sentinel'
 
 import { AppDispatch, RootState } from '../store'
@@ -33,6 +33,12 @@ export const initialState: InitialStateInstances = {
     connectionType: ConnectionType.Standalone,
     isRediStack: false,
     modules: [],
+    loading: false,
+  },
+  editedInstance: {
+    loading: false,
+    error: '',
+    data: null,
   },
   instanceOverview: {
     version: '',
@@ -138,10 +144,25 @@ const instancesSlice = createSlice({
     },
 
     // set connected instance
-    setConnectedInstance: (state, { payload }: { payload: Instance }) => {
+    setConnectedInstance: (state) => {
+      state.connectedInstance.loading = true
+    },
+
+    // set connected instance success
+    setConnectedInstanceSuccess: (state, { payload }: { payload: Instance }) => {
       const isRediStack = state.data?.find((db) => db.id === state.connectedInstance.id)?.isRediStack
       state.connectedInstance = payload
+      state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
+    },
+
+    // set edited instance
+    setEditedInstance: (state, { payload }: { payload:Nullable<Instance> }) => {
+      state.editedInstance.data = payload
+    },
+
+    setConnectedInstanceFailure: (state) => {
+      state.connectedInstance.loading = false
     },
 
     // reset connected instance
@@ -162,6 +183,8 @@ export const {
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
+  setConnectedInstanceSuccess,
+  setConnectedInstanceFailure,
   setConnectedInstance,
   setConnectedInstanceId,
   resetConnectedInstance,
@@ -172,12 +195,15 @@ export const {
   changeInstanceAliasSuccess,
   changeInstanceAliasFailure,
   resetInstanceUpdate,
+  setEditedInstance,
 } = instancesSlice.actions
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
+export const editedInstanceSelector = (state: RootState) =>
+  state.connections.instances.editedInstance
 export const connectedInstanceOverviewSelector = (state: RootState) =>
   state.connections.instances.instanceOverview
 
@@ -199,7 +225,7 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
       }: {
         data: DatabaseInstanceResponse[];
         status: number;
-      } = await apiService.get(`${ApiEndpoints.INSTANCE}`)
+      } = await apiService.get(`${ApiEndpoints.DATABASES}`)
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.instancesCount, data?.length)
@@ -225,7 +251,7 @@ export function createInstanceStandaloneAction(
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.INSTANCE}`, payload)
+      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
@@ -255,7 +281,7 @@ export function updateInstanceAction({ id, ...payload }: Instance, onSuccess?: (
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.put(`${ApiEndpoints.INSTANCE}/${id}`, payload)
+      const { status } = await apiService.put(`${ApiEndpoints.DATABASES}/${id}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
@@ -277,16 +303,16 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 
     try {
       const state = stateInit()
-      const instancesIds = map(instances, 'id')
-      const { status } = await apiService.delete(ApiEndpoints.INSTANCE, {
-        data: { ids: instancesIds },
+      const databasesIds = map(instances, 'id')
+      const { status } = await apiService.delete(ApiEndpoints.DATABASES, {
+        data: { ids: databasesIds },
       })
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
         dispatch<any>(fetchInstancesAction())
 
-        if (instancesIds.includes(state.app.context.contextInstanceId)) {
+        if (databasesIds.includes(state.app.context.contextInstanceId)) {
           dispatch(resetConnectedInstance())
           dispatch(setAppContextInitialState())
         }
@@ -311,19 +337,43 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 }
 
 // Asynchronous thunk action
-export function fetchInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
+    dispatch(setConnectedInstance())
 
     try {
-      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.INSTANCE}/${id}`)
+      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${id}`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(setConnectedInstance(data))
+        dispatch(setConnectedInstanceSuccess(data))
+        dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchEditedInstanceAction(id: string, onSuccess?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+
+    try {
+      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${id}`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setEditedInstance(data))
+        dispatch(setDefaultInstanceSuccess())
+      }
+      onSuccess?.()
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(setConnectedInstanceFailure())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
     }
@@ -340,7 +390,7 @@ export function checkConnectToInstanceAction(
     dispatch(setDefaultInstance())
     dispatch(resetConnectedInstance())
     try {
-      const { status } = await apiService.get(`${ApiEndpoints.INSTANCE}/${id}/connect`)
+      const { status } = await apiService.get(`${ApiEndpoints.DATABASES}/${id}/connect`)
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
@@ -362,6 +412,7 @@ const checkoutToSentinelFlow = (
 ) => {
   const payloadSentinel = { ...payload }
   delete payloadSentinel.name
+  delete payloadSentinel.db
 
   dispatch<any>(fetchMastersSentinelAction(payloadSentinel, onRedirectToSentinel))
 }
@@ -375,7 +426,7 @@ export function getDatabaseConfigInfoAction(
   return async (dispatch: AppDispatch) => {
     dispatch(getDatabaseConfigInfo())
     try {
-      const { status, data } = await apiService.get(`${ApiEndpoints.INSTANCE}/${id}/overview`)
+      const { status, data } = await apiService.get(`${ApiEndpoints.DATABASES}/${id}/overview`)
 
       if (isStatusSuccessful(status)) {
         dispatch(getDatabaseConfigInfoSuccess(data))
@@ -406,7 +457,7 @@ export function changeInstanceAliasAction(
       sourceInstance = CancelToken.source()
 
       const { status } = await apiService.patch(
-        `${ApiEndpoints.INSTANCE}/${id}/name`,
+        `${ApiEndpoints.DATABASES}/${id}/name`,
         { newName },
         { cancelToken: sourceInstance.token }
       )

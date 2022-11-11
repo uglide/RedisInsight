@@ -1,8 +1,9 @@
 import { AxiosError } from 'axios'
 import { Nullable } from 'uiSrc/utils'
-import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import { ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
+import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface IError extends AxiosError {
   id: string
@@ -39,7 +40,9 @@ export interface StateAppContext {
   browser: {
     keyList: {
       isDataLoaded: boolean
-      scrollTopPosition: number
+      scrollPatternTopPosition: number
+      scrollRedisearchTopPosition: number
+      isNotRendered: boolean
       selectedKey: Nullable<RedisResponseBuffer>
     },
     panelSizes: {
@@ -167,10 +170,10 @@ export enum RedisResponseBufferType {
   Buffer = 'Buffer'
 }
 
-export interface RedisResponseBuffer {
+export type RedisResponseBuffer = {
   type: RedisResponseBufferType
   data: UintArray
-}
+} & Exclude<RedisStringAPI, string>
 
 export type RedisString = string | RedisResponseBuffer
 

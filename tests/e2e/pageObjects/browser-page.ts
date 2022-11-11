@@ -93,6 +93,8 @@ export class BrowserPage {
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
+    patternModeBtn =  Selector('[data-testid=search-mode-pattern-btn]');
+    redisearchModeBtn =  Selector('[data-testid=search-mode-redisearch-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -100,9 +102,12 @@ export class BrowserPage {
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
+    loader = Selector('[data-testid=type-loading]');
+    newIndexPanel = Selector('[data-testid=create-index-panel]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
+    redisearchFreeLink = Selector('[data-testid=redisearch-free-db]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -122,6 +127,10 @@ export class BrowserPage {
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
+    selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
+    createIndexBtn = Selector('[data-testid=create-index-btn]');
+    cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
+    confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -165,6 +174,10 @@ export class BrowserPage {
     claimRetryCountInput = Selector('[data-testid=retry-count]');
     lastIdInput = Selector('[data-testid=last-id-field]');
     inlineItemEditor = Selector('[data-testid=inline-item-editor]');
+    indexNameInput = Selector('[data-testid=index-name]');
+    prefixFieldInput = Selector('[data-test-subj=comboBoxInput]');
+    indexIdentifierInput = Selector('[data-testid^=identifier-]');
+    indexFieldType = Selector('[data-testid^=field-type-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -182,6 +195,7 @@ export class BrowserPage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
+    popover = Selector('[role=dialog]');
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
@@ -247,6 +261,9 @@ export class BrowserPage {
     stringValueAsJson = Selector(this.cssJsonValue);
     // POPUPS
     changeValueWarning = Selector('[data-testid=approve-popover]');
+    // TABLE
+    keyListItem = Selector('[role=rowgroup] [role=row]');
+
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -254,6 +271,7 @@ export class BrowserPage {
      */
     async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t
             .click(this.plusAddKeyButton)
             .click(this.addKeyNameInput)
@@ -316,6 +334,7 @@ export class BrowserPage {
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.setOption);
@@ -336,6 +355,7 @@ export class BrowserPage {
      */
     async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.zsetOption);
@@ -356,13 +376,14 @@ export class BrowserPage {
      */
     async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.listOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
+        await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         await t.click(this.listKeyElementInput);
         await t.typeText(this.listKeyElementInput, element, { replace: true, paste: true });
         await t.click(this.addKeyButton);
@@ -377,6 +398,7 @@ export class BrowserPage {
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.hashOption);
@@ -491,11 +513,20 @@ export class BrowserPage {
     }
 
     /**
+     * Get selector by key name
+     * @param keyName The name of the key
+     */
+    async getKeySelectorByName(keyName: string): Promise<Selector> {
+        return Selector(`[data-testid="key-${keyName}"]`);
+    }
+
+    /**
      * Verifying if the Key is in the List of keys
      * @param keyName The name of the key
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        await common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }
 
@@ -879,8 +910,6 @@ export class BrowserPage {
     async changeDelimiterInTreeView(delimiter: string): Promise<void> {
         // Open delimiter popup
         await t.click(this.treeViewDelimiterButton);
-        // Check the previous value
-        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value not correct');
         // Apply new value to the field
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
         // Click on save button
@@ -947,15 +976,26 @@ export class BrowserPage {
             // Remember results value
             const rememberedScanResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
-            const scannedValueText = await this.scannedValue.textContent;
+            const scannedValueText = this.scannedValue.textContent;
             const regExp = new RegExp(`${i} 00` + '.');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
                 .doubleClick(this.scanMoreButton)
-                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed', { timeout: 30000 });
+                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed');
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
-            await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
+            await t.expect(scannedResults).gt(rememberedScanResults);
         }
+    }
+
+    /**
+     * Open Select Index droprown and select option
+     * @param index The name of format
+     */
+    async selectIndexByName(index: string): Promise<void> {
+        const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
+        await t
+            .click(this.selectIndexDdn)
+            .click(option);
     }
 }
 

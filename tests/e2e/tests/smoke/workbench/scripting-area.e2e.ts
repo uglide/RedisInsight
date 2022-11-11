@@ -45,9 +45,9 @@ test('Verify that user can comment out any characters in scripting area and all 
     // Check that 2 results are shown
     await t.expect(workbenchPage.queryCardContainer.count).eql(2);
     // Check that we have results with sent commands
-    const sentCommandText1 = await workbenchPage.queryCardCommand.withExactText(command1);
+    const sentCommandText1 = workbenchPage.queryCardCommand.withExactText(command1);
     await t.expect(sentCommandText1.exists).ok('Result of sent command not exists');
-    const sentCommandText2 = await workbenchPage.queryCardCommand.withExactText(command2);
+    const sentCommandText2 = workbenchPage.queryCardCommand.withExactText(command2);
     await t.expect(sentCommandText2.exists).ok('Result of sent command not exists');
 });
 test('Verify that user can run multiple commands in one query in Workbench', async t => {
@@ -60,6 +60,8 @@ test('Verify that user can run multiple commands in one query in Workbench', asy
     ];
         // Send commands
     await workbenchPage.sendCommandInWorkbench(commandForSend1);
+    await t.expect(workbenchPage.executionCommandTime.exists).ok('Execution command time is not displayed for single command');
+    await t.expect(workbenchPage.executionCommandTime.exists).ok('Execution time icon is not displayed for single command');
     await workbenchPage.sendCommandInWorkbench(commandForSend2);
     // Check that all the previous run commands are saved and displayed
     await common.reloadPage();
@@ -71,4 +73,11 @@ test('Verify that user can run multiple commands in one query in Workbench', asy
     for(const command of multipleCommands) {
         await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok(`The command ${command} from multiple query is not displayed`);
     }
+    // Reload page and validate that time executions are displayed for collapsed commands
+    await common.reloadPage();
+    const countCommandsInHistory = await workbenchPage.queryCardCommand.count;
+    const countExecutionTime = await workbenchPage.executionCommandTime.count;
+    const countExecutionIcon = await workbenchPage.executionCommandIcon.count;
+    await t.expect(countExecutionTime).eql(countCommandsInHistory, 'Not correct number of execution time');
+    await t.expect(countExecutionIcon).eql(countCommandsInHistory, 'Not correct number of execution time');
 });

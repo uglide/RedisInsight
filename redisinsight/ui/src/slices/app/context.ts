@@ -11,8 +11,10 @@ export const initialState: StateAppContext = {
   browser: {
     keyList: {
       isDataLoaded: false,
-      scrollTopPosition: 0,
-      selectedKey: null
+      scrollPatternTopPosition: 0,
+      scrollRedisearchTopPosition: 0,
+      isNotRendered: true,
+      selectedKey: null,
     },
     panelSizes: {},
     tree: {
@@ -64,8 +66,14 @@ const appContextSlice = createSlice({
     setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
       state.browser.keyList.isDataLoaded = payload
     },
-    setBrowserKeyListScrollPosition: (state, { payload }: { payload: number }) => {
-      state.browser.keyList.scrollTopPosition = payload
+    setBrowserPatternScrollPosition: (state, { payload }: { payload: number }) => {
+      state.browser.keyList.scrollPatternTopPosition = payload
+    },
+    setBrowserRedisearchScrollPosition: (state, { payload }: { payload: number }) => {
+      state.browser.keyList.scrollRedisearchTopPosition = payload
+    },
+    setBrowserIsNotRendered: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isNotRendered = payload
     },
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
@@ -152,7 +160,9 @@ export const {
   setAppContextConnectedInstanceId,
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
-  setBrowserKeyListScrollPosition,
+  setBrowserPatternScrollPosition,
+  setBrowserRedisearchScrollPosition,
+  setBrowserIsNotRendered,
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
@@ -168,7 +178,7 @@ export const {
   setWorkbenchEAItemScrollTop,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
-  setLastAnalyticsPage
+  setLastAnalyticsPage,
 } = appContextSlice.actions
 
 // Selectors

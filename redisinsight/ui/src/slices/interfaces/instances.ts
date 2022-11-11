@@ -27,11 +27,12 @@ export interface Instance extends DatabaseInstanceResponse {
   password?: Nullable<string>
   username?: Nullable<string>
   name?: string
-  tls?: TlsSettings
+  db?: string
+  tls?: boolean
   tlsClientAuthRequired?: boolean
-  tlsClientCertId?: number | undefined
   verifyServerCert?: boolean
-  caCertName?: string
+  caCert?: CaCertificate
+  clientCert?: ClientCertificate
   authUsername?: Nullable<string>
   authPass?: Nullable<string>
   isDeleting?: boolean
@@ -39,6 +40,20 @@ export interface Instance extends DatabaseInstanceResponse {
   modules: RedisModuleDto[]
   isRediStack?: boolean
   visible?: boolean
+  loading?: boolean
+}
+
+interface CaCertificate {
+  id?: string
+  name?: string
+  certificate?: string
+}
+
+interface ClientCertificate {
+  id?: string
+  name?: string
+  key?: string
+  certificate?: string
 }
 
 export enum ConnectionType {
@@ -144,12 +159,14 @@ export enum RedisCustomModulesName {
   IpTables = 'iptables-input-filter',
 }
 
-const RediSearchModulesText = [
+export const REDISEARCH_MODULES: string[] = [
   RedisDefaultModules.Search,
   RedisDefaultModules.SearchLight,
   RedisDefaultModules.FT,
-  RedisDefaultModules.FTL
-].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+  RedisDefaultModules.FTL,
+]
+
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
@@ -264,7 +281,14 @@ export interface InitialStateInstances {
   changedSuccessfully: boolean
   deletedSuccessfully: boolean
   connectedInstance: Instance
+  editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
+}
+
+export interface InitialStateEditedInstances {
+  loading: boolean
+  error: string
+  data: Nullable<Instance>
 }
 
 export interface InitialStateCluster {

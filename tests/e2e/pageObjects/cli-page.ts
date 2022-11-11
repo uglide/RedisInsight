@@ -91,7 +91,7 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         //Add keys
         const keyValueArray = await common.createArrayWithKeyValueAndDelimiter(amount);
-        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }
@@ -105,7 +105,7 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         //Add keys
         const keyValueArray = await common.createArrayWithKeyAndDelimiter(amount);
-        await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { paste: true });
+        await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }
@@ -119,6 +119,19 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
+    }
+
+    /**
+   * Send command in Cli
+   * @param commands The commands to send
+   */
+    async sendCommandsInCli(commands: string[]): Promise<void> {
+        await t.click(this.cliExpandButton);
+        for (const command of commands) {
+            await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
+            await t.pressKey('enter');
+        }
         await t.click(this.cliCollapseButton);
     }
 

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
 import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -136,8 +136,10 @@ describe('WorkbenchService', () => {
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      expect(await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto))
-        .toEqual(mockCommandExecutionToRun);
+      const result = await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto);
+      // can't predict execution time
+      expect(result).toMatchObject(mockCommandExecutionToRun);
+      expect(result.executionTime).toBeGreaterThan(0);
     });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
@@ -208,7 +210,7 @@ describe('WorkbenchService', () => {
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[0]})
         .mockResolvedValue([mockSendCommandResultSuccess]);
-      
+
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[1]})
         .mockResolvedValue([mockSendCommandResultFail]);
