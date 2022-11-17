@@ -451,6 +451,15 @@ export const constants = {
     threshold: 4 * 60 * 60 * 1000,
   },
 
+  TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION: {
+    name: 'luaScript',
+  },
+  TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION: {
+    name: 'bigHashes',
+  },
+  TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION: {
+    name: 'useSmallerKeys',
+  },
 
   // etc...
 }
