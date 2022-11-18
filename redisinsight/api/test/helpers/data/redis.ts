@@ -467,6 +467,13 @@ export const initDataHelper = (rte) => {
       pipeline.push(['eval', `return ${i}`, '0'])
     }
     await insertKeysBasedOnEnv(pipeline);
+  const setRedisearchConfig = async (
+    rule: string,
+    value: string,
+  ): Promise<any> => {
+    const command = `FT.CONFIG SET ${rule} ${value}`;
+
+    return executeCommand(...command.split(' '));
   };
 
   return {
@@ -491,5 +498,6 @@ export const initDataHelper = (rte) => {
     generateNGraphs,
     generateNCachedScripts,
     getClientNodes,
+    setRedisearchConfig,
   }
 }
