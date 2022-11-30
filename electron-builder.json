@@ -86,7 +86,8 @@
     "plugs": [
       "default",
       "dm-crypt",
-      "kernel-crypto-api"
+      "kernel-crypto-api",
+      "password-manager-service"
     ]
   },
   "directories": {
