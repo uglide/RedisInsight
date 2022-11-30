@@ -85,9 +85,12 @@
   "snap": {
     "plugs": [
       "default",
-      "dm-crypt",
-      "kernel-crypto-api",
       "password-manager-service"
+    ],
+    "confinement": "strict",
+    "stagePackages": [
+      "default",
+      "libsecret-1-0"
     ]
   },
   "directories": {
