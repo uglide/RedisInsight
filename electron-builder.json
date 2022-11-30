@@ -85,7 +85,8 @@
   "snap": {
     "plugs": [
       "default",
-      "dm-crypt"
+      "dm-crypt",
+      "kernel-crypto-api"
     ]
   },
   "directories": {
