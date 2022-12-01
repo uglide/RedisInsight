@@ -15,6 +15,8 @@ export class MemoryEfficiencyPage {
     reportItem = Selector('[data-test-subj^=items-report-]');
     selectedReport = Selector('[data-testid=select-report]');
     sortByLength = Selector('[data-testid=btn-change-table-keys]');
+    recommendationsTab = Selector('[data-testid=Recommendations-tab]');
+    luaScriptButton = Selector('[data-test-subj=luaScript-button]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS
@@ -26,6 +28,9 @@ export class MemoryEfficiencyPage {
     topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
     topNamespacesEmptyContainer = Selector('[data-testid=top-namespaces-empty]');
     topNamespacesEmptyMessage = Selector('[data-testid=top-namespaces-message]');
+    noRecommendationsMessage =  Selector('[data-testid=empty-recommendations-message]');
+    codeChangesLabel = Selector('[data-testid=code_changes]');
+    configurationChangesLabel = Selector('[data-testid=configuration_changes]');
     topKeysKeySizeCell = Selector('[data-testid^=nsp-usedMemory-value]');
     topKeysLengthCell = Selector('[data-testid^=length-value]');
     // TABLE
@@ -44,4 +49,15 @@ export class MemoryEfficiencyPage {
     noExpiryPoint = Selector('[data-testid*=bar-0-]:not(rect[data-testid=bar-0-0])');
     // LINKS
     treeViewLink = Selector('[data-testid=tree-view-page-link]');
+    readMoreLink = Selector('[data-testid=read-more-link]');
+    // CONTAINERS
+    luaScriptAccordion = Selector('[data-testid=luaScript-accordion]');
+    luaScriptTextContainer = Selector('#luaScript');
+    useSmallKeysAccordion = Selector('[data-testid=useSmallerKeys-accordion]');
+    bigHashesAccordion = Selector('[data-testid=bigHashes-accordion]');
+    combineStringsAccordion = Selector('[data-testid=combineSmallStringsToHashes-accordion]');
+    increaseSetAccordion = Selector('[data-testid=increaseSetMaxIntsetEntries-accordion]');
+    avoidLogicalDbAccordion = Selector('[data-testid=avoidLogicalDatabases-accordion]');
+    convertHashToZipAccordion = Selector('[data-testid=convertHashtableToZiplist-accordion]');
+    compressHashAccordion = Selector('[data-testid=compressHashFieldNames-accordion]');
 }

@@ -1,5 +1,7 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { isNull, flatten, uniqBy } from 'lodash';
+import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
@@ -7,6 +9,7 @@ import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-an
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
+import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { AppTool } from 'src/models';
 
@@ -16,6 +19,7 @@ export class DatabaseAnalysisService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly recommendationService: RecommendationService,
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
@@ -52,10 +56,22 @@ export class DatabaseAnalysisService {
         progress.total += nodeResult.progress.total;
       });
 
+      const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
+        flatten(await Promise.all(
+          scanResults.map(async (nodeResult) => (
+            await this.recommendationService.getRecommendations({
+              client: nodeResult.client,
+              keys: nodeResult.keys,
+              total: progress.total,
+            })
+          )),
+        )),
+      );
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientOptions.instanceId,
         ...dto,
         progress,
+        recommendations,
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       return this.databaseAnalysisProvider.create(analysis);
@@ -84,5 +100,17 @@ export class DatabaseAnalysisService {
    */
   async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
     return this.databaseAnalysisProvider.list(databaseId);
+  }
+
+  /**
+   * Get recommendations summary
+   * @param recommendations
+   */
+
+  static getRecommendationsSummary(recommendations: Recommendation[]): Recommendation[] {
+    return uniqBy(
+      recommendations.filter((recommendation) => !isNull(recommendation)),
+      'name',
+    );
   }
 }
