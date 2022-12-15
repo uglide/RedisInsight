@@ -17,7 +17,7 @@ import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databas
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 
-@ApiTags('Database Instances')
+@ApiTags('Database')
 @Controller('databases')
 export class DatabaseController {
   constructor(
