@@ -17,6 +17,7 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 export class CreateDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password', 'nameFromProvider', 'provider',
   'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster',
+  'ssh', 'sshHost', 'sshPort', 'sshUsername', 'sshPassword',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',

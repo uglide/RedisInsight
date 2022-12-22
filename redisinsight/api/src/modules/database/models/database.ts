@@ -7,7 +7,7 @@ import {
   IsBoolean, IsEnum,
   IsInt,
   IsNotEmpty,
-  IsNotEmptyObject,
+  IsNotEmptyObject, IsNumber,
   IsOptional,
   IsString,
   MaxLength,
@@ -215,4 +215,29 @@ export class Database {
   @IsOptional()
   @IsBoolean({ always: true })
   new?: boolean;
+
+  @Expose()
+  @IsOptional()
+  @IsBoolean()
+  ssh?: boolean;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  sshHost?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  sshPort?: number;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  sshUsername?: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  sshPassword?: string;
 }

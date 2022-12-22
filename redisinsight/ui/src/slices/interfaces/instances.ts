@@ -40,6 +40,11 @@ export interface Instance extends DatabaseInstanceResponse {
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean
+  ssh?: boolean
+  sshHost?: string
+  sshPort?: number
+  sshUsername?: string
+  sshPassword?: string
 }
 
 interface CaCertificate {

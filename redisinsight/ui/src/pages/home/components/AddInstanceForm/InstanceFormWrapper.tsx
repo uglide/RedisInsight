@@ -206,6 +206,11 @@ const InstanceFormWrapper = (props: Props) => {
       password,
       sentinelMasterUsername,
       sentinelMasterPassword,
+      ssh,
+      sshHost,
+      sshPort,
+      sshUsername,
+      sshPassword,
     } = values
 
     const database = {
@@ -263,6 +268,16 @@ const InstanceFormWrapper = (props: Props) => {
       database.sentinelMaster.password = sentinelMasterPassword
     }
 
+    console.log('___ adeting db. values', values)
+
+    if (ssh) {
+      database.ssh = ssh
+      database.sshHost = sshHost
+      database.sshPort = +sshPort
+      database.sshUsername = sshUsername
+      database.sshPassword = sshPassword
+    }
+
     handleEditDatabase(removeEmpty(database))
   }
 
@@ -276,7 +291,12 @@ const InstanceFormWrapper = (props: Props) => {
       db,
       sentinelMasterName,
       sentinelMasterUsername,
-      sentinelMasterPassword
+      sentinelMasterPassword,
+      ssh,
+      sshHost,
+      sshPort,
+      sshUsername,
+      sshPassword,
     } = values
     const database: any = { name, host, port: +port, db: +db, username, password }
 
@@ -326,6 +346,16 @@ const InstanceFormWrapper = (props: Props) => {
       }
     }
 
+    console.log('___ adding db. values', values)
+
+    if (ssh) {
+      database.ssh = ssh
+      database.sshHost = sshHost
+      database.sshPort = +sshPort
+      database.sshUsername = sshUsername
+      database.sshPassword = sshPassword
+    }
+
     handleSubmitDatabase(removeEmpty(database))
 
     const databasesCount: number = JSON.parse(
@@ -353,6 +383,8 @@ const InstanceFormWrapper = (props: Props) => {
       newTlsClientCert,
       newTlsClientKey,
     } = values
+
+    values.ssh = !!values.ssh
 
     const tlsSettings = {
       useTls: tls,

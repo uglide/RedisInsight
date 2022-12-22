@@ -84,6 +84,11 @@ export interface DbConnectionInfo extends Instance {
   sentinelMasterUsername?: string
   sentinelMasterPassword?: string
   sentinelMasterName?: string
+  ssh?: boolean
+  sshHost?: string
+  sshPort?: number
+  sshUsername?: string
+  sshPassword?: string
 }
 
 export interface Props {
@@ -163,6 +168,11 @@ const AddStandaloneForm = (props: Props) => {
       sentinelMasterUsername,
       servername,
       provider,
+      ssh,
+      sshHost,
+      sshPort,
+      sshUsername,
+      sshPassword,
     },
     initialValues: initialValuesProp,
     width,
@@ -203,6 +213,11 @@ const AddStandaloneForm = (props: Props) => {
     sentinelMasterName: sentinelMaster?.name || '',
     sentinelMasterUsername,
     sentinelMasterPassword,
+    ssh,
+    sshHost,
+    sshPort,
+    sshUsername,
+    sshPassword,
   })
 
   const [initialValues, setInitialValues] = useState(prepareInitialValues())
@@ -309,6 +324,7 @@ const AddStandaloneForm = (props: Props) => {
           }
         })
       }
+      console.log('___ values', values)
       onSubmit(values)
     },
   })
@@ -1102,6 +1118,109 @@ const AddStandaloneForm = (props: Props) => {
     </>
   )
 
+  const SshDetails = () => (
+    <>
+      <EuiFlexGroup
+        className={flexGroupClassName}
+      >
+        <EuiFlexItem
+          style={{ width: '230px' }}
+          grow={false}
+          className={flexItemClassName}
+        >
+          <EuiCheckbox
+            id={`${htmlIdGenerator()()} over ssh`}
+            name="ssh"
+            label="Use SSH"
+            checked={!!formik.values.ssh}
+            onChange={formik.handleChange}
+            data-testid="ssh"
+          />
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      {formik.values.ssh && (
+        <div className="boxSection">
+          <EuiFlexGroup className={flexGroupClassName}>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Host*">
+                <EuiFieldText
+                  name="sshHost"
+                  id="sshHost"
+                  fullWidth
+                  maxLength={200}
+                  placeholder="Enter host"
+                  value={formik.values.sshHost ?? ''}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    formik.setFieldValue(
+                      e.target.name,
+                      validateCertName(e.target.value)
+                    )}
+                  data-testid="sshHost"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+                <EuiFieldNumber
+                  name="sshPort"
+                  id="sshPort"
+                  data-testid="sshPort"
+                  style={{ width: '100%' }}
+                  placeholder="Enter Port"
+                  value={formik.values.sshPort ?? ''}
+                  maxLength={6}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    formik.setFieldValue(
+                      e.target.name,
+                      validatePortNumber(e.target.value.trim())
+                    )
+                  }}
+                  type="text"
+                  min={0}
+                  max={MAX_PORT_NUMBER}
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup className={flexGroupClassName}>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Username*">
+                <EuiFieldText
+                  name="sshUsername"
+                  id="sshUsername"
+                  fullWidth
+                  maxLength={200}
+                  placeholder="Enter username"
+                  value={formik.values.sshUsername ?? ''}
+                  onChange={formik.handleChange}
+                  data-testid="sshUsername"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Password">
+                <EuiFieldPassword
+                  type="dual"
+                  name="sshPassword"
+                  id="sshPassword"
+                  data-testid="sshPassword"
+                  fullWidth
+                  className="passwordField"
+                  maxLength={200}
+                  placeholder="Enter Password"
+                  value={formik.values.sshPassword ?? ''}
+                  onChange={formik.handleChange}
+                  dualToggleProps={{ color: 'text' }}
+                  autoComplete="new-password"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </div>
+      )}
+    </>
+  )
+
   const SentinelMasterDatabase = () => (
     <>
       {(!!db && !isCloneMode) && (
@@ -1324,6 +1443,7 @@ const AddStandaloneForm = (props: Props) => {
             {DatabaseForm()}
             { instanceType !== InstanceType.Sentinel && DBIndex() }
             {TlsDetails()}
+            {SshDetails()}
           </EuiForm>
         )}
         {(isEditMode || isCloneMode) && connectionType !== ConnectionType.Sentinel && (

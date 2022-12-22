@@ -12,6 +12,8 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { cloneClassInstance } from 'src/utils';
 import { ClientContext, ClientMetadata } from 'src/common/models';
+import * as tunnel from 'tunnel-ssh';
+import * as detectPort from 'detect-port';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -35,16 +37,70 @@ export class RedisService {
     this.lastClientsSync = Date.now();
   }
 
+  private async getTunnel(database: Database) {
+    const localHost = '127.0.0.1';
+    const localPort = await detectPort(50000);
+
+    return new Promise((resolve, reject) => {
+      const tnl = tunnel({
+        host: database.sshHost,
+        port: database.sshPort,
+        username: database.sshUsername,
+        password: database.sshPassword,
+        dstHost: database.host,
+        dstPort: database.port,
+        localHost,
+        localPort,
+      }, (error) => {
+        if (error) {
+          reject(error);
+        }
+      });
+
+      tnl.on('listening', () => {
+        console.log('___ listening');
+        resolve(tnl);
+      });
+
+      tnl.on('close', () => {
+        console.log('___ close');
+        reject(new Error('Tunnel connection was closed'));
+      });
+    });
+  }
+
   public async createStandaloneClient(
     database: Database,
     appTool: ClientContext,
     useRetry: boolean,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Redis> {
+    let tnl;
     const config = await this.getRedisConnectionConfig(database);
+
+    if (database.ssh) {
+      tnl = await this.getTunnel(database);
+    }
 
     return await new Promise((resolve, reject) => {
       try {
+        if (tnl) {
+          const tnlAddress = tnl.address();
+
+          tnl.on('error', (error) => {
+            console.log('___ error 2');
+            reject(error);
+          });
+
+          tnl.on('close', () => {
+            console.log('___ close 2');
+            reject(new Error('Tunnel connection was closed'));
+          });
+
+          config.host = tnlAddress.address;
+          config.port = tnlAddress.port;
+        }
+
         const connection = new Redis({
           ...config,
           showFriendlyErrorStack: true,
@@ -76,13 +132,38 @@ export class RedisService {
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Cluster> {
+    let tnl;
     const config = await this.getRedisConnectionConfig(database);
+
+    if (database.ssh) {
+      tnl = await this.getTunnel(database);
+    }
+
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Redis.Cluster([{
+        const startNode = {
           host: database.host,
           port: database.port,
-        }].concat(nodes), {
+        };
+
+        if (tnl) {
+          const tnlAddress = tnl.address();
+
+          tnl.on('error', (error) => {
+            console.log('___ error 2');
+            reject(error);
+          });
+
+          tnl.on('close', () => {
+            console.log('___ close 2');
+            reject(new Error('Tunnel connection was closed'));
+          });
+
+          startNode.host = tnlAddress.address;
+          startNode.port = tnlAddress.port;
+        }
+
+        const cluster = new Redis.Cluster([startNode].concat(nodes), {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
           redisOptions: {
             ...config,

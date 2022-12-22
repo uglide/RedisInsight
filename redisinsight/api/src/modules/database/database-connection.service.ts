@@ -68,7 +68,7 @@ export class DatabaseConnectionService {
     this.logger.log('Getting database client.');
 
     let client = (await this.redisService.getClientInstance(clientMetadata))?.client;
-
+    console.log('Use existing client instance');
     if (client && this.redisService.isClientConnected(client)) {
       return client;
     }
@@ -91,6 +91,7 @@ export class DatabaseConnectionService {
   async createClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
     this.logger.log('Creating database client.');
     const database = await this.databaseService.get(clientMetadata.databaseId);
+    console.log('___ database fetched before client creation', database)
     const connectionName = generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId);
 
     try {

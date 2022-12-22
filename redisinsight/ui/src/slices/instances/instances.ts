@@ -279,7 +279,7 @@ export function createInstanceStandaloneAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
-
+    console.log('___ payload', payload)
     try {
       const { status } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
 

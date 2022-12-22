@@ -162,4 +162,24 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   new: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  ssh: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  sshHost: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  sshPort: number;
+
+  @Expose()
+  @Column({ nullable: true })
+  sshUsername: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  sshPassword: string;
 }
