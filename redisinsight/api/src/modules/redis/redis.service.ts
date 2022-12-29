@@ -82,8 +82,13 @@ export class RedisService {
         const cluster = new Redis.Cluster([{
           host: database.host,
           port: database.port,
-        }].concat(nodes), {
+        // }].concat(nodes), {
+        }].concat([]), {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
+          slotsRefreshTimeout: REDIS_CLIENTS_CONFIG.clusterSlotsRefreshTimeout,
+          dnsLookup: REDIS_CLIENTS_CONFIG.clusterDNSLookup
+            ? (address, callback) => callback(null, address)
+            : () => undefined,
           redisOptions: {
             ...config,
             showFriendlyErrorStack: true,

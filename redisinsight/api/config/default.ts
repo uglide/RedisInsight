@@ -77,6 +77,8 @@ export default {
     retryTimes: parseInt(process.env.CLIENTS_RETRY_TIMES, 10) || 5,
     retryDelay: parseInt(process.env.CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
+    clusterSlotsRefreshTimeout: parseInt(process.env.CLIENTS_CLUSTER_SLOTS_REFRESH_TIMEOUT, 10) || 2000,
+    clusterDNSLookup: process.env.CLIENTS_CLUSTER_DNS_LOOKUP ? process.env.SOCKETS_CORS === 'true' : true,
   },
   redis_scan: {
     countDefault: parseInt(process.env.SCAN_COUNT_DEFAULT, 10) || 200,

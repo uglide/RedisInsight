@@ -41,10 +41,11 @@ export class DatabaseConnectionService {
 
     // !Temporary. Refresh cluster nodes on connection
     if (client?.isCluster) {
-      const primaryNodeOptions = client.nodes('master')[0].options;
+      // disable host and port update on connect
 
-      toUpdate.host = primaryNodeOptions.host;
-      toUpdate.port = primaryNodeOptions.port;
+      // const primaryNodeOptions = client.nodes('master')[0].options;
+      // toUpdate.host = primaryNodeOptions.host;
+      // toUpdate.port = primaryNodeOptions.port;
 
       toUpdate.nodes = client.nodes().map(({ options }) => ({
         host: options.host,
