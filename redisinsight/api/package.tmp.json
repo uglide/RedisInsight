@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.1.0",
+  "version": "2.20.0",
   "description": "RedisInsight API",
   "author": "Artyom Podymov <artyom.podymov@softeq.com>,",
   "private": true,
