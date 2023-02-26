@@ -34,7 +34,7 @@ import MenuBuilder from './menu';
 import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
-import server from './api/dist/src/main';
+// import server from './api/dist/src/main';
 import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -129,7 +129,7 @@ const launchApiServer = async () => {
 };
 
 const bootstrap = async () => {
-  await launchApiServer();
+  // await launchApiServer();
   nativeTheme.themeSource = 'dark';
 
   store = new Store();
